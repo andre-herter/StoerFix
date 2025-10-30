@@ -15,7 +15,8 @@
     "@tailwindcss/vite": "^4.1.14",
     "@tailwindplus/elements": "^1.0.18",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.4",
     "tailwindcss": "^4.1.14"
   },
   "devDependencies": {

@@ -7,6 +7,7 @@ import Login from "./component/loginForm/Login.tsx";
 import Register from "./component/registerForm/Register.tsx";
 import Kontakt from "./component/kontakt/Kontakt.tsx";
 import Impressum from "./component/impressum/Impressum.tsx";
+import CreateEntry from "./component/createEntry/CreateEntry.tsx";
 
 function App() {
   return (
@@ -20,8 +21,10 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/kontakt" element={<Kontakt />} />
             <Route path="/impressum" element={<Impressum />} />
+            <Route path="/create" element={<CreateEntry />} />
           </Routes>
         </main>
+
         <Footer />
       </BrowserRouter>
     </>

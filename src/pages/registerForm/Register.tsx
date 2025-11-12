@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../../supabaseClient";
 
 export default function Register() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -12,45 +15,61 @@ export default function Register() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setError("");
     setSuccess("");
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
       setError("Die Passwörter stimmen nicht überein.");
       return;
     }
-    console.log("Registrierte Daten:", formData);
-    setSuccess("Registrierung erfolgreich!");
+
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: {
+          username: formData.username,
+        },
+      },
+    });
+
+    if (error) {
+      if (error.message.includes("User already registered")) {
+        setError(
+          "Diese E-Mail-Adresse ist bereits registriert. Bitte logge dich ein."
+        );
+        setTimeout(() => {
+          navigate("/login");
+        }, 5000);
+      } else {
+        setError(error.message);
+      }
+    } else {
+      console.log("Registrierte Daten:", data);
+      setSuccess("Registrierung erfolgreich! Bitte überprüfe deine E-Mail.");
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    }
   };
 
   return (
     <>
-      <div className="flex justify-start">
-        <Link to="/" className="flex flex-row-reverse gap-2 m-4">
-          Zurück
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-            />
-          </svg>
-        </Link>
-      </div>
-      <div className=" flex justify-center items-center">
+      <div className="flex justify-center items-center w-screen">
         <form
           onSubmit={handleSubmit}
           className="bg-slate-400 shadow-lg rounded-2xl p-8 w-full max-w-md space-y-6"

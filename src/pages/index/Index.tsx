@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 function Index() {
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center">
         <div className="mx-auto max-w-3xl px-6 py-12 sm:py-16 lg:py-20 text-center">
           <h1 className="text-5xl font-bold tracking-tight text-white sm:text-7xl">
             StörFix

@@ -50,9 +50,6 @@ export default function Example() {
             Kontakt
           </Link>
         </div>
-        <div>
-          <Link to={"/create"}>Eintrag erstellen</Link>
-        </div>
       </nav>
       <Dialog
         open={mobileMenuOpen}

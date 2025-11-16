@@ -8,41 +8,51 @@ interface EntryListProps {
 const EntryList: React.FC<EntryListProps> = ({ entries }) => {
   if (entries.length === 0) return null;
 
+  const getBgColor = (entry: Entry) => {
+    if (entry.problem && entry.inProgress && entry.completed)
+      return "bg-green-500";
+    if (entry.problem && entry.inProgress) return "bg-yellow-300";
+    if (entry.problem) return "bg-red-500";
+    return "bg-gray-100";
+  };
+
+  const textFields: (keyof Entry)[] = ["problem", "inProgress", "completed"];
+
   return (
-    <div className="flex flex-wrap justify-center">
-      {entries.map((entry, index) => (
-        <div key={index} className="flex flex-row items-end gap-2">
-          <div className="h-24 px-6 flex items-center  rounded-md bg-blue-500 text-white">
-            Benutzer
-          </div>
+    <div className="flex flex-col gap-4 justify-center items-center">
+      {entries.map((entry, index) => {
+        const bgColor = getBgColor(entry);
 
-          <div className="flex flex-wrap gap-4">
-            {[
-              { key: "problem", className: "bg-red-100" },
-              {
-                key: "inProgress",
-                className: "bg-yellow-100",
-              },
-              {
-                key: "completed",
-                className: "bg-green-100",
-              },
-            ].map(({ key, className }) => (
-              <div key={key} className="flex flex-col items-center">
-                <textarea
-                  className={`h-24 w-72 p-2 border rounded resize-none ${className}`}
-                  value={entry[key as keyof typeof entry] || ""}
-                  readOnly
-                />
-              </div>
-            ))}
-          </div>
+        return (
+          <div
+            key={index}
+            className="flex flex-row flex-wrap items-end gap-4 bg-slate-300 p-4 rounded-lg shadow-md"
+          >
+            <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
+              Benutzer
+            </div>
 
-          <button className="h-24 px-6 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 transition">
-            Ändern
-          </button>
-        </div>
-      ))}
+            <div className="flex flex-wrap gap-4">
+              {textFields.map((key) => (
+                <div key={key} className="flex flex-col items-center">
+                  <textarea
+                    className={`h-24 w-72 p-2 border rounded resize-none ${bgColor}`}
+                    value={entry[key] ? String(entry[key]) : ""}
+                    readOnly
+                  />
+                </div>
+              ))}
+            </div>
+
+            <button
+              className="h-24 px-6 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              onClick={() => console.log("Ändern gedrückt für:", entry)}
+            >
+              Ändern
+            </button>
+          </div>
+        );
+      })}
     </div>
   );
 };

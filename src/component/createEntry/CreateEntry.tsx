@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EntryForm from "../entryForm/EntryForm";
 import EntryList from "../entryList/EntryList";
+import { supabase } from "../../supabaseClient";
 
 export interface Entry {
   id: string;
@@ -17,11 +18,21 @@ function CreateEntry() {
   });
   const [entries, setEntries] = useState<Entry[]>([]);
 
+  // 🔹 Supabase: Einträge laden
+  useEffect(() => {
+    const fetchEntries = async () => {
+      const { data, error } = await supabase.from("entries").select("*");
+      if (error) console.error("Fehler beim Laden:", error);
+      else setEntries(data as Entry[]);
+    };
+    fetchEntries();
+  }, []);
+
   const handleChange = (field: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.problem && !form.inProgress && !form.completed) return;
 
     const newEntry: Entry = {
@@ -29,6 +40,14 @@ function CreateEntry() {
       ...form,
     };
 
+    // 🔹 Supabase: Speichern
+    const { error } = await supabase.from("entries").insert([newEntry]);
+    if (error) {
+      console.error("Fehler beim Speichern:", error);
+      return;
+    }
+
+    // 🔹 Lokal updaten
     setEntries((prev) => [...prev, newEntry]);
     setForm({ problem: "", inProgress: "", completed: "" });
   };

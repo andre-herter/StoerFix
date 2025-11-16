@@ -1,4 +1,9 @@
 import React from "react";
+import { supabase } from "../../supabaseClient";
+
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 
 interface EntryFormProps {
   form: {
@@ -49,7 +54,7 @@ const EntryForm: React.FC<EntryFormProps> = ({ form, onChange, onSave }) => {
   return (
     <div className="flex flex-wrap justify-center items-end gap-4">
       <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white">
-        Benutzer
+        {user?.user_metadata?.username}
       </div>
 
       {fields.map(({ key, label, colorClasses, placeholder }) => (

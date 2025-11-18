@@ -11,6 +11,7 @@ import {
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import logo from "../../assets/Logo.png";
 import { Link } from "react-router-dom";
+import Logout from "../logout/Logout";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -46,9 +47,14 @@ export default function Header() {
           </Popover>
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-2">
-          <Link to={"/kontakt"} className="text-sm/6 font-semibold text-white">
+          <Link
+            to={"/kontakt"}
+            className="text-sm/6 font-semibold text-white hover:text-blue-500"
+          >
             Kontakt
           </Link>
+
+          <Logout />
         </div>
       </nav>
       <Dialog

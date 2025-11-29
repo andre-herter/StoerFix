@@ -29,7 +29,7 @@ function Logout() {
       console.log("Ausgeloggt");
       setTimeout(() => {
         navigate("/login");
-      }, 2000);
+      }, 1000);
     }
   };
 

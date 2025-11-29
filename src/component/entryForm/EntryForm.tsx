@@ -1,9 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-
-const {
-  data: { user },
-} = await supabase.auth.getUser();
 
 interface EntryFormProps {
   form: {
@@ -13,16 +9,35 @@ interface EntryFormProps {
   };
   onChange: (field: keyof EntryFormProps["form"], value: string) => void;
   onSave: () => void;
+  isEditing: boolean;
 }
 
-const EntryForm: React.FC<EntryFormProps> = ({ form, onChange, onSave }) => {
+const EntryForm: React.FC<EntryFormProps> = ({
+  form,
+  onChange,
+  onSave,
+  isEditing,
+}) => {
+  const [username, setUsername] = useState<string>("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUsername(user?.user_metadata?.username ?? "Benutzer");
+    };
+
+    fetchUser();
+  }, []);
+
   const fields = [
     {
       key: "problem" as const,
       label: "Problem",
       colorClasses: {
         text: "text-red-500",
-        bg: "bg-red-200",
+        bg: "bg-red-300",
         ring: "focus:ring-red-400",
       },
       placeholder: "Beschreibe das Problem oder die Aufgabe...",
@@ -53,8 +68,8 @@ const EntryForm: React.FC<EntryFormProps> = ({ form, onChange, onSave }) => {
 
   return (
     <div className="flex flex-wrap justify-center items-end gap-4">
-      <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white">
-        {user?.user_metadata?.username}
+      <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
+        {username}
       </div>
 
       {fields.map(({ key, label, colorClasses, placeholder }) => (
@@ -79,10 +94,12 @@ const EntryForm: React.FC<EntryFormProps> = ({ form, onChange, onSave }) => {
         className={`h-24 px-6 flex items-center justify-center ${
           isEmpty
             ? "bg-gray-400 cursor-not-allowed"
+            : isEditing
+            ? "bg-yellow-500 hover:bg-yellow-600"
             : "bg-blue-500 hover:bg-blue-600"
         } text-white font-semibold rounded-lg shadow-md transition-all duration-200`}
       >
-        Speichern
+        {isEditing ? "Speichern" : "Speichern"}
       </button>
     </div>
   );

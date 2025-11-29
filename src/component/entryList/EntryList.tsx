@@ -1,18 +1,18 @@
-import React from "react";
 import { Entry } from "../createEntry/CreateEntry";
 
 interface EntryListProps {
   entries: Entry[];
+  onEdit: (entry: Entry) => void;
 }
 
-const EntryList: React.FC<EntryListProps> = ({ entries }) => {
+const EntryList: React.FC<EntryListProps> = ({ entries, onEdit }) => {
   if (entries.length === 0) return null;
 
   const getBgColor = (entry: Entry) => {
     if (entry.problem && entry.inProgress && entry.completed)
       return "bg-green-500";
     if (entry.problem && entry.inProgress) return "bg-yellow-300";
-    if (entry.problem) return "bg-red-500";
+    if (entry.problem) return "bg-red-400";
     return "bg-gray-100";
   };
 
@@ -20,18 +20,17 @@ const EntryList: React.FC<EntryListProps> = ({ entries }) => {
 
   return (
     <div className="flex flex-col gap-4 justify-center items-center">
-      {entries.map((entry, index) => {
+      {entries.map((entry) => {
         const bgColor = getBgColor(entry);
 
         return (
           <div
-            key={index}
+            key={entry.id}
             className="flex flex-row flex-wrap items-end gap-4 bg-slate-300 p-4 rounded-lg shadow-md"
           >
             <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
               Benutzer
             </div>
-
             <div className="flex flex-wrap gap-4">
               {textFields.map((key) => (
                 <div key={key} className="flex flex-col items-center">
@@ -46,7 +45,7 @@ const EntryList: React.FC<EntryListProps> = ({ entries }) => {
 
             <button
               className="h-24 px-6 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-              onClick={() => console.log("Ändern gedrückt für:", entry)}
+              onClick={() => onEdit(entry)}
             >
               Ändern
             </button>

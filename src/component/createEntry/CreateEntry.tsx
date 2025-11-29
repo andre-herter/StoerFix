@@ -17,8 +17,8 @@ function CreateEntry() {
     completed: "",
   });
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [editId, setEditId] = useState<string | null>(null);
 
-  // 🔹 Supabase: Einträge laden
   useEffect(() => {
     const fetchEntries = async () => {
       const { data, error } = await supabase.from("entries").select("*");
@@ -35,27 +35,60 @@ function CreateEntry() {
   const handleSave = async () => {
     if (!form.problem && !form.inProgress && !form.completed) return;
 
-    const newEntry: Entry = {
-      id: crypto.randomUUID(),
-      ...form,
-    };
+    if (editId) {
+      const { error } = await supabase
+        .from("entries")
+        .update({
+          problem: form.problem,
+          inProgress: form.inProgress,
+          completed: form.completed,
+        })
+        .eq("id", editId);
 
-    // 🔹 Supabase: Speichern
-    const { error } = await supabase.from("entries").insert([newEntry]);
-    if (error) {
-      console.error("Fehler beim Speichern:", error);
-      return;
+      if (!error) {
+        setEntries((prev) =>
+          prev.map((e) => (e.id === editId ? { ...e, ...form } : e))
+        );
+      }
+      setEditId(null);
+    } else {
+      const { data, error } = await supabase
+        .from("entries")
+        .insert({
+          problem: form.problem,
+          inProgress: form.inProgress,
+          completed: form.completed,
+        })
+        .select();
+      console.log("Daten:", data);
+      console.log("Fehler:", error);
+
+      if (!error && data) {
+        setEntries((prev) => [...prev, data[0]]);
+      }
     }
 
-    // 🔹 Lokal updaten
-    setEntries((prev) => [...prev, newEntry]);
     setForm({ problem: "", inProgress: "", completed: "" });
+  };
+
+  const handleEdit = (entry: Entry) => {
+    setForm({
+      problem: entry.problem,
+      inProgress: entry.inProgress,
+      completed: entry.completed,
+    });
+    setEditId(entry.id);
   };
 
   return (
     <div className="flex flex-col text-black gap-6 p-6 min-h-screen">
-      <EntryForm form={form} onChange={handleChange} onSave={handleSave} />
-      <EntryList entries={entries} />
+      <EntryForm
+        form={form}
+        onChange={handleChange}
+        onSave={handleSave}
+        isEditing={!!editId}
+      />
+      <EntryList entries={entries} onEdit={handleEdit} />
     </div>
   );
 }

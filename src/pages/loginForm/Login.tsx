@@ -23,7 +23,7 @@ export default function Login() {
     setError(null);
     setSuccess(null);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: formData.email,
       password: formData.password,
     });
@@ -32,7 +32,6 @@ export default function Login() {
       setError("Ungültige Anmeldedaten");
     } else {
       setSuccess("Login erfolgreich!");
-      console.log("Eingeloggter Benutzer:", data.user);
       navigate("/create");
     }
   };

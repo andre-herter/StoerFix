@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { Entry } from "../createEntry/CreateEntry";
+import { LoadUserProfile } from "../loadUserProfile/LoadUserProfile";
 
 interface EntryListProps {
   entries: Entry[];
@@ -6,6 +8,14 @@ interface EntryListProps {
 }
 
 const EntryList: React.FC<EntryListProps> = ({ entries, onEdit }) => {
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const profiles = await LoadUserProfile();
+      console.log(profiles);
+    };
+
+    fetchUsers();
+  }, []);
   if (entries.length === 0) return null;
 
   const getBgColor = (entry: Entry) => {
@@ -13,7 +23,7 @@ const EntryList: React.FC<EntryListProps> = ({ entries, onEdit }) => {
       return "bg-green-500";
     if (entry.problem && entry.inProgress) return "bg-yellow-300";
     if (entry.problem) return "bg-red-400";
-    return "bg-gray-100";
+    return "";
   };
 
   const textFields: (keyof Entry)[] = ["problem", "inProgress", "completed"];

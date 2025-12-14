@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { supabase } from "../../supabaseClient";
+import { LoadUserProfile } from "../loadUserProfile/LoadUserProfile";
 
 interface EntryFormProps {
   form: {
@@ -10,6 +10,8 @@ interface EntryFormProps {
   onChange: (field: keyof EntryFormProps["form"], value: string) => void;
   onSave: () => void;
   isEditing: boolean;
+  open: boolean;
+  onClose: () => void;
 }
 
 const EntryForm: React.FC<EntryFormProps> = ({
@@ -17,18 +19,18 @@ const EntryForm: React.FC<EntryFormProps> = ({
   onChange,
   onSave,
   isEditing,
+  open,
+  onClose,
 }) => {
   const [username, setUsername] = useState<string>("");
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUsername(user?.user_metadata?.username ?? "Benutzer");
+    const fetchProfile = async () => {
+      const { username } = await LoadUserProfile();
+      setUsername(username);
     };
 
-    fetchUser();
+    fetchProfile();
   }, []);
 
   const fields = [
@@ -66,41 +68,61 @@ const EntryForm: React.FC<EntryFormProps> = ({
 
   const isEmpty = !form.problem && !form.inProgress && !form.completed;
 
+  if (!open) return null;
+
   return (
-    <div className="flex flex-wrap justify-center items-end gap-4">
-      <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
-        {username}
-      </div>
-
-      {fields.map(({ key, label, colorClasses, placeholder }) => (
-        <div key={key} className="flex flex-col">
-          <label
-            className={`block mb-2 font-medium text-center ${colorClasses.text}`}
-          >
-            {label}
-          </label>
-          <textarea
-            className={`w-72 h-24 rounded-md resize-none ${colorClasses.bg} p-2 border border-gray-400 focus:outline-none focus:ring-2 ${colorClasses.ring}`}
-            placeholder={placeholder}
-            value={form[key]}
-            onChange={(e) => onChange(key, e.target.value)}
-          />
-        </div>
-      ))}
-
-      <button
-        onClick={onSave}
-        disabled={isEmpty}
-        className={`h-24 px-6 flex items-center justify-center ${
-          isEmpty
-            ? "bg-gray-400 cursor-not-allowed"
-            : isEditing
-            ? "bg-yellow-500 hover:bg-yellow-600"
-            : "bg-blue-500 hover:bg-blue-600"
-        } text-white font-semibold rounded-lg shadow-md transition-all duration-200`}
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-gray-200 rounded-lg p-6 shadow-lg max-w-6xl w-full flex flex-wrap justify-center items-end gap-4"
+        onClick={(e) => e.stopPropagation()}
       >
-        {isEditing ? "Speichern" : "Speichern"}
-      </button>
+        <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
+          {username || "Lade Username..."}
+        </div>
+
+        {fields.map(({ key, label, colorClasses, placeholder }) => (
+          <div key={key} className="flex flex-col">
+            <label
+              className={`block mb-2 font-medium text-center ${colorClasses.text}`}
+            >
+              {label}
+            </label>
+            <textarea
+              className={`w-72 h-24 rounded-md resize-none ${colorClasses.bg} p-2 border border-gray-400 focus:outline-none focus:ring-2 ${colorClasses.ring}`}
+              placeholder={placeholder}
+              value={form[key]}
+              onChange={(e) => onChange(key, e.target.value)}
+            />
+          </div>
+        ))}
+
+        {/* Buttons */}
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={onSave}
+            disabled={isEmpty}
+            className={`h-24 px-6 flex items-center justify-center ${
+              isEmpty
+                ? "bg-gray-400 cursor-not-allowed"
+                : isEditing
+                ? "bg-yellow-500 hover:bg-yellow-600"
+                : "bg-blue-500 hover:bg-blue-600"
+            } text-white font-semibold rounded-lg shadow-md transition-all duration-200`}
+          >
+            Speichern
+          </button>
+
+          <button
+            onClick={onClose}
+            className="h-10 px-6 bg-gray-300 hover:bg-gray-400 rounded-md font-medium"
+          >
+            Abbrechen
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

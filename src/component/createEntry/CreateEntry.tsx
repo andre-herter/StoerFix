@@ -18,6 +18,7 @@ function CreateEntry() {
   });
   const [entries, setEntries] = useState<Entry[]>([]);
   const [editId, setEditId] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -25,6 +26,7 @@ function CreateEntry() {
       if (error) console.error("Fehler beim Laden:", error);
       else setEntries(data as Entry[]);
     };
+
     fetchEntries();
   }, []);
 
@@ -34,6 +36,20 @@ function CreateEntry() {
 
   const handleSave = async () => {
     if (!form.problem && !form.inProgress && !form.completed) return;
+
+    if (form.completed && !form.inProgress) {
+      alert(
+        "Eintrag kann nur abgeschlossen werden, wenn er in Bearbeitung ist."
+      );
+      return;
+    }
+
+    if (!form.problem && (form.inProgress || form.completed)) {
+      alert(
+        "Bitte zuerst ein Problem eintragen, bevor du etwas in Bearbeitung setzt."
+      );
+      return;
+    }
 
     if (editId) {
       const { error } = await supabase
@@ -60,8 +76,6 @@ function CreateEntry() {
           completed: form.completed,
         })
         .select();
-      console.log("Daten:", data);
-      console.log("Fehler:", error);
 
       if (!error && data) {
         setEntries((prev) => [...prev, data[0]]);
@@ -69,6 +83,7 @@ function CreateEntry() {
     }
 
     setForm({ problem: "", inProgress: "", completed: "" });
+    setOpen(false);
   };
 
   const handleEdit = (entry: Entry) => {
@@ -78,17 +93,38 @@ function CreateEntry() {
       completed: entry.completed,
     });
     setEditId(entry.id);
+    setOpen(true);
   };
 
   return (
-    <div className="flex flex-col text-black gap-6 p-6 min-h-screen">
+    <div className="flex flex-col items-center text-black min-h-screen">
+      <button
+        className="flex justify-center mt-5 rounded-xl bg-indigo-500 w-50  px-5 py-3 text-base font-semibold text-white shadow-md hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
+        onClick={() => setOpen(true)}
+      >
+        Neuen Eintrag erstellen
+      </button>
+
       <EntryForm
         form={form}
         onChange={handleChange}
         onSave={handleSave}
         isEditing={!!editId}
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          setEditId(null);
+          setForm({
+            problem: "",
+            inProgress: "",
+            completed: "",
+          });
+        }}
       />
-      <EntryList entries={entries} onEdit={handleEdit} />
+
+      <div className="p-6">
+        <EntryList entries={entries} onEdit={handleEdit} />
+      </div>
     </div>
   );
 }

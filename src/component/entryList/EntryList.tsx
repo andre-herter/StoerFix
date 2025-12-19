@@ -17,7 +17,6 @@ const EntryList: React.FC<EntryListProps> = ({ entries, onEdit }) => {
   };
 
   const textFields: (keyof Entry)[] = ["problem", "inProgress", "completed"];
-  console.log(entries);
 
   return (
     <div className="flex flex-col gap-4 justify-center items-center">
@@ -25,34 +24,41 @@ const EntryList: React.FC<EntryListProps> = ({ entries, onEdit }) => {
         const bgColor = getBgColor(entry);
 
         return (
-          <div
-            key={entry.id}
-            className="flex flex-row flex-wrap items-end gap-4 bg-slate-300 p-4 rounded-lg shadow-md"
-          >
-            <div className="h-24 px-6 flex flex-col items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
-              <span>{entry.profiles?.username}</span>
-              <span>{new Date(entry.created_at).toLocaleDateString()}</span>
-              <span>{new Date(entry.created_at).toLocaleTimeString()}</span>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              {textFields.map((key) => (
-                <div key={key} className="flex flex-col items-center">
-                  <textarea
-                    className={`h-24 w-72 p-2 border rounded resize-none ${bgColor}`}
-                    value={entry[key] ? String(entry[key]) : ""}
-                    readOnly
-                  />
-                </div>
-              ))}
-            </div>
-
-            <button
-              className="h-24 px-6 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-              onClick={() => onEdit(entry)}
+          <>
+            <div
+              key={entry.id}
+              className="flex flex-row flex-wrap items-end gap-4 bg-slate-300 p-4 rounded-lg shadow-md"
             >
-              Ändern
-            </button>
-          </div>
+              <div className="h-24 px-6 flex flex-col items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
+                <span>{entry.profiles?.username}</span>
+                <span>{new Date(entry.created_at).toLocaleDateString()}</span>
+                <span>
+                  {new Date(entry.created_at).toLocaleTimeString("de-DE", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-4">
+                {textFields.map((key) => (
+                  <div key={key} className="flex flex-col items-center">
+                    <textarea
+                      className={`h-24 w-72 p-2 border rounded resize-none ${bgColor}`}
+                      value={entry[key] ? String(entry[key]) : ""}
+                      readOnly
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <button
+                className="h-24 px-6 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                onClick={() => onEdit(entry)}
+              >
+                Ändern
+              </button>
+            </div>
+          </>
         );
       })}
     </div>

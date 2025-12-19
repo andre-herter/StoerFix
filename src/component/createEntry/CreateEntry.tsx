@@ -26,14 +26,14 @@ function CreateEntry() {
 
   useEffect(() => {
     const fetchEntries = async () => {
-      const { data, error } = await supabase.from("entries").select(`
-    *,
-    profiles(username)
-  `);
+      const { data, error } = await supabase
+        .from("entries")
+        .select(`*,profiles(username)`)
+        .order("created_at", { ascending: false });
+
       if (error) console.error("Fehler beim Laden:", error);
       else setEntries(data as Entry[]);
     };
-    console.log(entries);
 
     fetchEntries();
   }, []);

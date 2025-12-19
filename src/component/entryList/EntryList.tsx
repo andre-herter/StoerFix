@@ -1,6 +1,4 @@
-import { useEffect } from "react";
 import { Entry } from "../createEntry/CreateEntry";
-import { LoadUserProfile } from "../loadUserProfile/LoadUserProfile";
 
 interface EntryListProps {
   entries: Entry[];
@@ -8,14 +6,6 @@ interface EntryListProps {
 }
 
 const EntryList: React.FC<EntryListProps> = ({ entries, onEdit }) => {
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const profiles = await LoadUserProfile();
-      console.log(profiles);
-    };
-
-    fetchUsers();
-  }, []);
   if (entries.length === 0) return null;
 
   const getBgColor = (entry: Entry) => {
@@ -27,6 +17,7 @@ const EntryList: React.FC<EntryListProps> = ({ entries, onEdit }) => {
   };
 
   const textFields: (keyof Entry)[] = ["problem", "inProgress", "completed"];
+  console.log(entries);
 
   return (
     <div className="flex flex-col gap-4 justify-center items-center">
@@ -38,8 +29,10 @@ const EntryList: React.FC<EntryListProps> = ({ entries, onEdit }) => {
             key={entry.id}
             className="flex flex-row flex-wrap items-end gap-4 bg-slate-300 p-4 rounded-lg shadow-md"
           >
-            <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
-              Benutzer
+            <div className="h-24 px-6 flex flex-col items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
+              <span>{entry.profiles?.username}</span>
+              <span>{new Date(entry.created_at).toLocaleDateString()}</span>
+              <span>{new Date(entry.created_at).toLocaleTimeString()}</span>
             </div>
             <div className="flex flex-wrap gap-4">
               {textFields.map((key) => (

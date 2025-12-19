@@ -1,7 +1,6 @@
 import { supabase } from "../../supabaseClient";
 
 export const LoadUserProfile = async () => {
-  // 1. Eingeloggten User holen
   const { data: authData, error: authError } = await supabase.auth.getUser();
 
   if (authError || !authData.user) {
@@ -10,17 +9,38 @@ export const LoadUserProfile = async () => {
   }
 
   const user = authData.user;
-  // 2. Username aus profiles Tabelle holen
-  const { data, error } = await supabase
+
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("username")
     .eq("id", user.id)
     .single();
 
-  if (error) {
-    console.error("Profile Ladefehler:", error);
-    return { user, username: null };
+  if (!profileError && profile) {
+    return { user, username: profile.username };
   }
 
-  return { user, username: data.username };
+  if (profileError?.code === "PGRST116") {
+    const username = user.user_metadata?.username;
+
+    if (!username) {
+      console.error("Kein Username in user_metadata gefunden");
+      return { user, username: null };
+    }
+
+    const { error: insertError } = await supabase.from("profiles").insert({
+      id: user.id,
+      username,
+    });
+
+    if (insertError) {
+      console.error("Profil konnte nicht erstellt werden:", insertError);
+      return { user, username: null };
+    }
+
+    return { user, username };
+  }
+
+  console.error("Profile Ladefehler:", profileError);
+  return { user, username: null };
 };

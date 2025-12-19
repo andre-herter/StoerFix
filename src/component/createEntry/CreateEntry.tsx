@@ -8,6 +8,10 @@ export interface Entry {
   problem: string;
   inProgress: string;
   completed: string;
+  created_at: string;
+  profiles?: {
+    username: string;
+  };
 }
 
 function CreateEntry() {
@@ -22,10 +26,14 @@ function CreateEntry() {
 
   useEffect(() => {
     const fetchEntries = async () => {
-      const { data, error } = await supabase.from("entries").select("*");
+      const { data, error } = await supabase.from("entries").select(`
+    *,
+    profiles(username)
+  `);
       if (error) console.error("Fehler beim Laden:", error);
       else setEntries(data as Entry[]);
     };
+    console.log(entries);
 
     fetchEntries();
   }, []);

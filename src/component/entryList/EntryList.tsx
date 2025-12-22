@@ -17,6 +17,11 @@ const EntryList: React.FC<EntryListProps> = ({ entries, onEdit }) => {
   };
 
   const textFields: (keyof Entry)[] = ["problem", "inProgress", "completed"];
+  const labelText: Record<string, string> = {
+    problem: "Problem",
+    inProgress: "In Bearbeitung",
+    completed: "Erledigt",
+  };
 
   return (
     <div className="flex flex-col gap-4 justify-center items-center">
@@ -32,16 +37,34 @@ const EntryList: React.FC<EntryListProps> = ({ entries, onEdit }) => {
               <div className="h-24 px-6 flex flex-col items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
                 <span>{entry.profiles?.username}</span>
                 <span>{new Date(entry.created_at).toLocaleDateString()}</span>
-                <span>
+                <span className="flex items-center justify-center gap-1 ">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
                   {new Date(entry.created_at).toLocaleTimeString("de-DE", {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
                 </span>
               </div>
+
               <div className="flex flex-wrap gap-4">
                 {textFields.map((key) => (
                   <div key={key} className="flex flex-col items-center">
+                    <label className="text-sm font-medium text-slate-700">
+                      {labelText[key] ?? key}
+                    </label>
                     <textarea
                       className={`h-24 w-72 p-2 border rounded resize-none ${bgColor}`}
                       value={entry[key] ? String(entry[key]) : ""}

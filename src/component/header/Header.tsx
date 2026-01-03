@@ -30,7 +30,6 @@ export default function Header({ onNewEntry }: HeaderProps) {
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-2">
           <ButtonLink text={"Eintrag"} to={"create"} />
-          <ButtonLink text={"Archiv"} to={"archiv"} />
           <Logout />
         </div>
 

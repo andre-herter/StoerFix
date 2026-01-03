@@ -12,6 +12,7 @@ export interface Entry {
   profiles?: {
     username: string;
   };
+  archived: boolean;
 }
 
 function CreateEntry() {
@@ -37,6 +38,13 @@ function CreateEntry() {
 
     fetchEntries();
   }, []);
+
+  const handleArchive = async (entry: Entry) => {
+    await supabase
+      .from("entries")
+      .update({ archived: true })
+      .eq("id", entry.id);
+  };
 
   const handleChange = (field: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -83,10 +91,16 @@ function CreateEntry() {
           inProgress: form.inProgress,
           completed: form.completed,
         })
-        .select();
+        .select(`*, profiles(username)`);
 
       if (!error && data) {
-        setEntries((prev) => [...prev, data[0]]);
+        setEntries((prev) =>
+          [...prev, data[0]].sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          )
+        );
       }
     }
 
@@ -131,7 +145,11 @@ function CreateEntry() {
       />
 
       <div className="p-6">
-        <EntryList entries={entries} onEdit={handleEdit} />
+        <EntryList
+          entries={entries}
+          onEdit={handleEdit}
+          onArchive={handleArchive}
+        />
       </div>
     </div>
   );

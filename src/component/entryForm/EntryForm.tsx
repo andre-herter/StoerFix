@@ -76,7 +76,12 @@ const EntryForm: React.FC<EntryFormProps> = ({
       onClick={onClose}
     >
       <div
-        className="bg-gray-200 rounded-lg p-6 shadow-lg max-w-6xl w-full flex flex-wrap justify-center items-end gap-4"
+        className="bg-gray-200 rounded-lg p-6 shadow-lg max-w-6xl w-full
+             flex flex-col           
+             items-center justify-center
+             xl:flex-row
+             xl:items-end lg:justify-center
+             flex-wrap gap-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
@@ -87,10 +92,12 @@ const EntryForm: React.FC<EntryFormProps> = ({
           <div key={key} className="flex flex-col">
             <label
               className={`block mb-2 font-medium text-center ${colorClasses.text}`}
+              htmlFor={key}
             >
               {label}
             </label>
             <textarea
+              id={key}
               className={`w-72 h-24 rounded-md resize-none ${colorClasses.bg} p-2 border border-gray-400 focus:outline-none focus:ring-2 ${colorClasses.ring}`}
               placeholder={placeholder}
               value={form[key]}

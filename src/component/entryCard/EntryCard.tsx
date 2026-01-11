@@ -18,15 +18,24 @@ const EntryCard: React.FC<EntryCardProps> = ({
       return "bg-green-500";
     if (entry.problem && entry.inProgress) return "bg-yellow-300";
     if (entry.problem) return "bg-red-400";
-    return "";
+    return "bg-slate-200";
+  };
+
+  const textFields: (keyof Entry)[] = ["problem", "inProgress", "completed"];
+
+  const labelText: Record<string, string> = {
+    problem: "Problem",
+    inProgress: "In Bearbeitung",
+    completed: "Erledigt",
   };
 
   const canArchive = !!entry.completed?.trim() && !entry.archived;
 
   return (
     <div
-      className={`flex flex-row flex-wrap items-end gap-4 p-4 rounded-lg shadow-md
-        ${isArchived ? "bg-slate-100 opacity-60" : "bg-slate-300"}`}
+      className={`flex flex-col items-center justify-center lg:flex-row flex-wrap gap-4 p-4 rounded-lg shadow-md lg:items-end ${
+        isArchived ? "bg-slate-100 opacity-60" : "bg-slate-300"
+      }`}
     >
       <div className="h-24 px-6 flex flex-col items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
         <span>{entry.profiles?.username}</span>
@@ -59,14 +68,23 @@ const EntryCard: React.FC<EntryCardProps> = ({
         </span>
       </div>
 
-      <div className="flex flex-wrap gap-4">
-        {(["problem", "inProgress", "completed"] as const).map((key) => (
-          <textarea
-            key={key}
-            className={`h-24 w-72 p-2 border rounded resize-none ${getBgColor()}`}
-            value={entry[key] ?? ""}
-            readOnly
-          />
+      <div className="flex flex-col items-center gap-4 lg:flex-row lg:flex-wrap lg:items-start">
+        {textFields.map((key) => (
+          <div key={key} className="flex flex-col items-center">
+            <label
+              className="text-sm font-medium text-slate-700 mb-2"
+              htmlFor={`field-${key}`}
+            >
+              {labelText[key] ?? key}
+            </label>
+
+            <textarea
+              id={`field-${key}`}
+              className={`h-24 w-72 lg:w-72 p-2 border rounded resize-none ${getBgColor()}`}
+              value={entry[key] ? String(entry[key]) : ""}
+              readOnly
+            />
+          </div>
         ))}
       </div>
 

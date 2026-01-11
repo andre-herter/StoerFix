@@ -7,6 +7,7 @@ interface EntryListProps {
   entries: Entry[];
   onEdit: (entry: Entry) => void;
   onArchive: (entry: Entry) => void;
+  showArchived: boolean;
 }
 
 const EntryList: React.FC<EntryListProps> = ({
@@ -23,7 +24,7 @@ const EntryList: React.FC<EntryListProps> = ({
     <div className="flex flex-col gap-4 items-center">
       <button
         onClick={() => setShowArchived((prev) => !prev)}
-        className="mb-4 px-4 py-2 rounded-lg border bg-blue-500 text-white hover:bg-blue-600 transition"
+        className="mb-4 px-4 py-2 rounded-lg  bg-indigo-500  text-white shadow-md hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
       >
         {showArchived ? "Aktive Einträge anzeigen" : "Archiv anzeigen"}
       </button>
@@ -31,7 +32,7 @@ const EntryList: React.FC<EntryListProps> = ({
       {showArchived ? (
         <ArchivedEntryList entries={archivedEntries} />
       ) : !activeEntries.length ? (
-        <p className="text-gray-500">Keine aktiven Einträge</p>
+        <p className="text-gray-500 text-4xl">Keine aktiven Einträge</p>
       ) : (
         activeEntries.map((entry) => (
           <EntryCard

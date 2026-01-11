@@ -8,11 +8,7 @@ import { Link } from "react-router-dom";
 import Logout from "../logout/Logout";
 import ButtonLink from "../buttonLink/ButtonLink";
 
-interface HeaderProps {
-  onNewEntry: () => void;
-}
-
-export default function Header({ onNewEntry }: HeaderProps) {
+export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -29,7 +25,7 @@ export default function Header({ onNewEntry }: HeaderProps) {
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-2">
-          <ButtonLink text={"Eintrag"} to={"create"} />
+          <ButtonLink text={"Einträge anzeigen"} to={"create"} />
           <Logout />
         </div>
 
@@ -69,19 +65,8 @@ export default function Header({ onNewEntry }: HeaderProps) {
 
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-white/10">
-              <div className="py-6">
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onNewEntry(); // 📱 Popup auch im Mobile Menü öffnen
-                  }}
-                  className="block rounded-lg px-3 py-2.5 text-base font-semibold text-white hover:bg-white/5 w-full text-left"
-                >
-                  Neuer Eintrag
-                </button>
-              </div>
-
-              <div className="py-6">
+              <div className="my-6 grid gap-5  ">
+                <ButtonLink text={"Einträge anzeigen"} to={"create"} />
                 <Logout />
               </div>
             </div>

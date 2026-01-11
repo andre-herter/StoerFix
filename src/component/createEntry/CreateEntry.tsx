@@ -40,10 +40,18 @@ function CreateEntry() {
   }, []);
 
   const handleArchive = async (entry: Entry) => {
-    await supabase
+    const { error } = await supabase
       .from("entries")
       .update({ archived: true })
       .eq("id", entry.id);
+
+    if (!error) {
+      setEntries((prev) =>
+        prev.map((e) => (e.id === entry.id ? { ...e, archived: true } : e))
+      );
+    } else {
+      console.error("Fehler beim Archivieren:", error);
+    }
   };
 
   const handleChange = (field: keyof typeof form, value: string) => {
@@ -149,6 +157,7 @@ function CreateEntry() {
           entries={entries}
           onEdit={handleEdit}
           onArchive={handleArchive}
+          showArchived={false}
         />
       </div>
     </div>

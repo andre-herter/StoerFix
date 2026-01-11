@@ -6,7 +6,8 @@ interface ArchivedEntryListProps {
 }
 
 const ArchivedEntryList: React.FC<ArchivedEntryListProps> = ({ entries }) => {
-  if (!entries.length) return "Keine Einträge vorhanden";
+  if (!entries.length)
+    return <p className="text-gray-500 text-4xl">Keine Einträge vorhanden</p>;
 
   return (
     <div className="flex flex-col gap-4 items-center">

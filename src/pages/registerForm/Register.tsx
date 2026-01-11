@@ -79,10 +79,14 @@ export default function Register() {
           </h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Benutzername
             </label>
             <input
+              id="username"
               type="text"
               name="username"
               value={formData.username}
@@ -94,10 +98,14 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               E-Mail-Adresse
             </label>
             <input
+              id="email"
               type="email"
               name="email"
               value={formData.email}
@@ -109,10 +117,14 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Passwort
             </label>
             <input
+              id="password"
               type="password"
               name="password"
               value={formData.password}
@@ -124,10 +136,14 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Passwort bestätigen
             </label>
             <input
+              id="confirmPassword"
               type="password"
               name="confirmPassword"
               value={formData.confirmPassword}

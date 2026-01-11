@@ -13,11 +13,7 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen">
       <BrowserRouter>
-        <Header
-          onNewEntry={function (): void {
-            throw new Error("Function not implemented.");
-          }}
-        />
+        <Header />
         <main className="flex-grow flex items-center justify-center">
           <Routes>
             <Route path="/" element={<Index />} />

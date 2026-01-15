@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import EntryForm from "../entryForm/EntryForm";
 import EntryList from "../entryList/EntryList";
 import { supabase } from "../../supabaseClient";
+import { InputSearchProps } from "../inputSearch/InputSearch";
 
 export interface Entry {
   id: string;
@@ -15,7 +16,7 @@ export interface Entry {
   archived: boolean;
 }
 
-function CreateEntry() {
+function CreateEntry({ query }: InputSearchProps) {
   const [form, setForm] = useState({
     problem: "",
     inProgress: "",
@@ -158,6 +159,7 @@ function CreateEntry() {
           onEdit={handleEdit}
           onArchive={handleArchive}
           showArchived={false}
+          query={query}
         />
       </div>
     </div>

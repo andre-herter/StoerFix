@@ -106,7 +106,6 @@ const EntryForm: React.FC<EntryFormProps> = ({
           </div>
         ))}
 
-        {/* Buttons */}
         <div className="flex flex-col gap-3">
           <button
             onClick={onSave}

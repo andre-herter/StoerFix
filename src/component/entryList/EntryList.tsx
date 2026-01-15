@@ -8,33 +8,43 @@ interface EntryListProps {
   onEdit: (entry: Entry) => void;
   onArchive: (entry: Entry) => void;
   showArchived: boolean;
+  query: string;
 }
 
 const EntryList: React.FC<EntryListProps> = ({
   entries,
   onEdit,
   onArchive,
+  query,
 }) => {
   const [showArchived, setShowArchived] = useState(false);
 
   const activeEntries = entries.filter((e) => !e.archived);
   const archivedEntries = entries.filter((e) => e.archived);
 
+  const filteredActive = activeEntries.filter((e) => {
+    const text = [e.problem, e.inProgress, e.completed, e.profiles?.username]
+      .join(" ")
+      .toLowerCase();
+
+    return text.includes(query.toLowerCase());
+  });
+
   return (
-    <div className="flex flex-col gap-4 items-center">
+    <div className="flex flex-col gap-4 items-center w-full">
       <button
         onClick={() => setShowArchived((prev) => !prev)}
-        className="mb-4 px-4 py-2 rounded-lg  bg-indigo-500  text-white shadow-md hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
+        className="mb-2 px-4 py-2 rounded-lg bg-indigo-500 text-white shadow-md hover:bg-indigo-400"
       >
         {showArchived ? "Aktive Einträge anzeigen" : "Archiv anzeigen"}
       </button>
 
       {showArchived ? (
         <ArchivedEntryList entries={archivedEntries} />
-      ) : !activeEntries.length ? (
+      ) : !filteredActive.length ? (
         <p className="text-gray-500 text-4xl">Keine aktiven Einträge</p>
       ) : (
-        activeEntries.map((entry) => (
+        filteredActive.map((entry) => (
           <EntryCard
             key={entry.id}
             entry={entry}

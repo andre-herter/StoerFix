@@ -69,23 +69,27 @@ const EntryCard: React.FC<EntryCardProps> = ({
       </div>
 
       <div className="flex flex-col items-center gap-4 lg:flex-row lg:flex-wrap lg:items-start">
-        {textFields.map((key) => (
-          <div key={key} className="flex flex-col items-center">
-            <label
-              className="text-sm font-medium text-slate-700 mb-2"
-              htmlFor={`field-${key}`}
-            >
-              {labelText[key] ?? key}
-            </label>
+        {textFields.map((key) => {
+          const uniqueId = `field-${key}-${crypto.randomUUID()}`;
 
-            <textarea
-              id={`field-${key}`}
-              className={`h-24 w-72 lg:w-72 p-2 border rounded resize-none ${getBgColor()}`}
-              value={entry[key] ? String(entry[key]) : ""}
-              readOnly
-            />
-          </div>
-        ))}
+          return (
+            <div key={uniqueId} className="flex flex-col items-center">
+              <label
+                className="text-sm font-medium text-slate-700 mb-2"
+                htmlFor={uniqueId}
+              >
+                {labelText[key] ?? key}
+              </label>
+
+              <textarea
+                id={uniqueId}
+                className={`h-24 w-72 lg:w-72 p-2 border rounded resize-none ${getBgColor()}`}
+                value={entry[key] ? String(entry[key]) : ""}
+                readOnly
+              />
+            </div>
+          );
+        })}
       </div>
 
       <div className="flex flex-col gap-2">

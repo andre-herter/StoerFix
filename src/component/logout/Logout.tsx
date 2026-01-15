@@ -26,7 +26,6 @@ function Logout() {
     if (error) {
       console.log("Logout fehlgeschlagen");
     } else {
-      console.log("Ausgeloggt");
       setTimeout(() => {
         navigate("/login");
       }, 1000);

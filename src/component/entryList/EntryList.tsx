@@ -7,8 +7,8 @@ interface EntryListProps {
   entries: Entry[];
   onEdit: (entry: Entry) => void;
   onArchive: (entry: Entry) => void;
-  showArchived: boolean;
   query: string;
+  showArchived: boolean;
 }
 
 const EntryList: React.FC<EntryListProps> = ({

@@ -42,8 +42,8 @@ export default function Header({ query, setQuery }: InputSearchProps) {
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-2">
-          <ButtonLink text="Einträge anzeigen" to="create" />
-          <Logout />
+          {user && <ButtonLink text="Einträge anzeigen" to="create" />}
+          {user && <Logout />}
         </div>
 
         <div className="flex lg:hidden">
@@ -91,8 +91,8 @@ export default function Header({ query, setQuery }: InputSearchProps) {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-white/10">
               <div className="my-6 grid gap-5">
-                <ButtonLink text="Einträge anzeigen" to="create" />
-                <Logout />
+                {user && <ButtonLink text="Einträge anzeigen" to="create" />}
+                {user && <Logout />}
               </div>
             </div>
           </div>

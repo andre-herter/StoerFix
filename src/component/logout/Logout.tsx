@@ -1,25 +1,8 @@
-import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-import type { User } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 
 function Logout() {
-  const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user ?? null);
-    });
-
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    return () => listener.subscription.unsubscribe();
-  }, []);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -31,8 +14,6 @@ function Logout() {
       }, 1000);
     }
   };
-
-  if (!user) return null;
 
   return (
     <button

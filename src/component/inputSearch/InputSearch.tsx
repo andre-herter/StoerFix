@@ -15,7 +15,7 @@ export default function InputSearch({ id, query, setQuery }: InputSearchProps) {
     <input
       id={id}
       name="id"
-      className="w-full rounded-lg px-3 py-2 bg-white text-black"
+      className="w-full rounded-lg px-3 py-2 bg-slate-300 text-black"
       placeholder="Suche in Einträgen…"
       value={query}
       onChange={handleChange}

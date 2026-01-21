@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/Logo.png";
 import Logout from "../logout/Logout";
 import ButtonLink from "../buttonLink/ButtonLink";
@@ -21,11 +21,13 @@ export default function Header({ query, setQuery }: InputSearchProps) {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
-      }
+      },
     );
 
     return () => listener.subscription.unsubscribe();
   }, []);
+
+  const { pathname } = useLocation();
 
   return (
     <header className="bg-gray-900">
@@ -38,7 +40,9 @@ export default function Header({ query, setQuery }: InputSearchProps) {
         </div>
 
         <div className="hidden lg:block w-full max-w-md">
-          {user && <InputSearch query={query} setQuery={setQuery} />}
+          {pathname !== "/" && user && (
+            <InputSearch query={query} setQuery={setQuery} />
+          )}
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-2">

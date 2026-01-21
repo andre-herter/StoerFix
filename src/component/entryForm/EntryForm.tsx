@@ -114,8 +114,8 @@ const EntryForm: React.FC<EntryFormProps> = ({
               isEmpty
                 ? "bg-gray-400 cursor-not-allowed"
                 : isEditing
-                ? "bg-yellow-500 hover:bg-yellow-600"
-                : "bg-blue-500 hover:bg-blue-600"
+                  ? "bg-yellow-500 hover:bg-yellow-600"
+                  : "bg-blue-500 hover:bg-blue-600"
             } text-white font-semibold rounded-lg shadow-md transition-all duration-200`}
           >
             Speichern

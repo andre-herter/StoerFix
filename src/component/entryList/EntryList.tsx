@@ -1,7 +1,7 @@
-import { useState } from "react";
 import EntryCard from "../../component/entryCard/EntryCard";
 import ArchivedEntryList from "../archivedEntryList/ArchivedEntryList";
 import { Entry } from "../createEntry/CreateEntry";
+import ButtonLayout from "../buttonLayout/ButtonLayout";
 
 interface EntryListProps {
   entries: Entry[];
@@ -9,6 +9,8 @@ interface EntryListProps {
   onArchive: (entry: Entry) => void;
   query: string;
   showArchived: boolean;
+  toggleArchived: () => void;
+  onCreate: () => void;
 }
 
 const EntryList: React.FC<EntryListProps> = ({
@@ -16,9 +18,10 @@ const EntryList: React.FC<EntryListProps> = ({
   onEdit,
   onArchive,
   query,
+  showArchived,
+  toggleArchived,
+  onCreate,
 }) => {
-  const [showArchived, setShowArchived] = useState(false);
-
   const activeEntries = entries.filter((e) => !e.archived);
   const archivedEntries = entries.filter((e) => e.archived);
 
@@ -32,12 +35,11 @@ const EntryList: React.FC<EntryListProps> = ({
 
   return (
     <div className="flex flex-col gap-4 items-center w-full">
-      <button
-        onClick={() => setShowArchived((prev) => !prev)}
-        className="mb-2 px-4 py-2 rounded-lg bg-indigo-500 text-white shadow-md hover:bg-indigo-400"
-      >
-        {showArchived ? "Aktive Einträge anzeigen" : "Archiv anzeigen"}
-      </button>
+      <ButtonLayout
+        onCreate={onCreate}
+        showArchived={showArchived}
+        toggleArchived={toggleArchived}
+      />
 
       {showArchived ? (
         <ArchivedEntryList entries={archivedEntries} />

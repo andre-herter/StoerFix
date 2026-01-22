@@ -17,7 +17,7 @@ function App() {
     <div className="flex flex-col min-h-screen">
       <BrowserRouter>
         <Header query={query} setQuery={setQuery} />
-        <main className="flex-grow flex items-center justify-center">
+        <main className="flex grow items-center justify-center">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />

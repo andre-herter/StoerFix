@@ -9,6 +9,7 @@ import Kontakt from "./component/kontakt/Kontakt.tsx";
 import Impressum from "./component/impressum/Impressum.tsx";
 import CreateEntry from "./component/createEntry/CreateEntry.tsx";
 import { useState } from "react";
+import NotFound404 from "./component/notFound404/NotFound404.tsx";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -28,6 +29,7 @@ function App() {
               path="/create"
               element={<CreateEntry query={query} setQuery={setQuery} />}
             />
+            <Route path="*" element={<NotFound404 />} />
           </Routes>
         </main>
         <Footer />

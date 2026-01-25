@@ -15,7 +15,7 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <BrowserRouter>
+      <BrowserRouter basename="/StoerFix">
         <Header query={query} setQuery={setQuery} />
         <main className="flex grow items-center justify-center">
           <Routes>

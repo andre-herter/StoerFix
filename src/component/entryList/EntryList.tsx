@@ -2,6 +2,7 @@ import EntryCard from "../../component/entryCard/EntryCard";
 import ArchivedEntryList from "../archivedEntryList/ArchivedEntryList";
 import { Entry } from "../createEntry/CreateEntry";
 import ButtonLayout from "../buttonLayout/ButtonLayout";
+import DataInfo from "../entryCount/EntryCount";
 
 interface EntryListProps {
   entries: Entry[];
@@ -11,6 +12,7 @@ interface EntryListProps {
   showArchived: boolean;
   toggleArchived: () => void;
   onCreate: () => void;
+  reloadFlag: number;
 }
 
 const EntryList: React.FC<EntryListProps> = ({
@@ -21,6 +23,7 @@ const EntryList: React.FC<EntryListProps> = ({
   showArchived,
   toggleArchived,
   onCreate,
+  reloadFlag,
 }) => {
   const activeEntries = entries.filter((e) => !e.archived);
   const archivedEntries = entries.filter((e) => e.archived);
@@ -35,6 +38,8 @@ const EntryList: React.FC<EntryListProps> = ({
 
   return (
     <div className="flex flex-col gap-4 items-center w-full">
+      <DataInfo reloadFlag={reloadFlag} />
+
       <ButtonLayout
         onCreate={onCreate}
         showArchived={showArchived}

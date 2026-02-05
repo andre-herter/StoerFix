@@ -35,11 +35,15 @@ export default function Header({ query, setQuery }: InputSearchProps) {
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Dein Unternehmen</span>
-            <img alt="Logo" src={logo} className="h-16 w-auto" />
+            <img
+              alt="Logo"
+              src={logo}
+              className="h-16 w-auto brightness-80 rounded-md"
+            />
           </Link>
         </div>
 
-        <div className="hidden lg:block w-full max-w-md">
+        <div className="lg:block w-40 md:w-full max-w-md">
           {pathname !== "/" && user && (
             <InputSearch query={query} setQuery={setQuery} />
           )}
@@ -81,16 +85,6 @@ export default function Header({ query, setQuery }: InputSearchProps) {
               <XMarkIcon aria-hidden="true" className="h-6 w-6" />
             </button>
           </div>
-
-          {user && (
-            <div className="mt-6">
-              <InputSearch
-                id="mobile-search"
-                query={query}
-                setQuery={setQuery}
-              />
-            </div>
-          )}
 
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-white/10">

@@ -25,8 +25,10 @@ function CreateEntry({ query }: InputSearchProps) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [editId, setEditId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
-
   const [showArchived, setShowArchived] = useState(false);
+  const [reloadFlag, setReloadFlag] = useState(0);
+
+  const triggerReload = () => setReloadFlag((v) => v + 1);
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -40,7 +42,7 @@ function CreateEntry({ query }: InputSearchProps) {
     };
 
     fetchEntries();
-  }, []);
+  }, [reloadFlag]);
 
   const handleArchive = async (entry: Entry) => {
     const { error } = await supabase
@@ -52,6 +54,7 @@ function CreateEntry({ query }: InputSearchProps) {
       setEntries((prev) =>
         prev.map((e) => (e.id === entry.id ? { ...e, archived: true } : e)),
       );
+      triggerReload();
     } else {
       console.error("Fehler beim Archivieren:", error);
     }
@@ -92,6 +95,7 @@ function CreateEntry({ query }: InputSearchProps) {
         setEntries((prev) =>
           prev.map((e) => (e.id === editId ? { ...e, ...form } : e)),
         );
+        triggerReload();
       }
       setEditId(null);
     } else {
@@ -112,6 +116,7 @@ function CreateEntry({ query }: InputSearchProps) {
               new Date(a.created_at).getTime(),
           ),
         );
+        triggerReload();
       }
     }
 
@@ -157,6 +162,7 @@ function CreateEntry({ query }: InputSearchProps) {
           query={query}
           toggleArchived={() => setShowArchived((prev) => !prev)}
           onCreate={() => setOpen(true)}
+          reloadFlag={reloadFlag}
         />
       </div>
     </div>

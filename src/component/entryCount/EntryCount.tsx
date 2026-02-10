@@ -1,79 +1,41 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../../supabaseClient";
+import { useEntryCounts } from "../../hooks/useEntryCounts";
 
 interface EntryCountProps {
   reloadFlag: number;
 }
 
 function EntryCount({ reloadFlag }: EntryCountProps) {
-  const [problemCount, setProblemCount] = useState(0);
-  const [inProgressCount, setInProgressCount] = useState(0);
-  const [completedCount, setCompletedCount] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
-
-  useEffect(() => {
-    const loadCounts = async () => {
-      try {
-        const [
-          { count: completed },
-          { count: inProgress },
-          { count: problem },
-          { count: total },
-        ] = await Promise.all([
-          supabase
-            .from("entries")
-            .select("*", { count: "exact", head: true })
-            .neq("completed", ""),
-
-          supabase
-            .from("entries")
-            .select("*", { count: "exact", head: true })
-            .neq("inProgress", "")
-            .eq("completed", ""),
-          supabase
-            .from("entries")
-            .select("*", { count: "exact", head: true })
-            .neq("problem", "")
-            .eq("inProgress", "")
-            .eq("completed", ""),
-          supabase.from("entries").select("*", { count: "exact", head: true }),
-        ]);
-
-        setCompletedCount(completed ?? 0);
-        setInProgressCount(inProgress ?? 0);
-        setProblemCount(problem ?? 0);
-        setTotalCount(total ?? 0);
-      } catch (err) {
-        console.error("Fehler beim Laden der Counts:", err);
-      }
-    };
-
-    loadCounts();
-  }, [reloadFlag]);
+  const { completed, inProgress, problem, total } = useEntryCounts(reloadFlag);
 
   return (
     <div className="text-white border-[3px] border-indigo-500 rounded-xl p-2 flex justify-between w-full max-w-100 mx-auto">
-      <div className="flex flex-col items-center">
+      <div
+        onClick={() => alert("klick")}
+        className="flex flex-col items-center cursor-pointer"
+      >
         <span className="text-sm text-red-400">Problem</span>
-        <span className="text-lg font-bold text-red-400">{problemCount}</span>
+        <span className="text-lg font-bold text-red-400">{problem}</span>
       </div>
 
-      <div className="flex flex-col items-center">
+      <div
+        onClick={() => alert("klick")}
+        className="flex flex-col items-center cursor-pointer"
+      >
         <span className="text-sm text-yellow-300">In Bearbeitung</span>
-        <span className="text-lg font-bold text-yellow-300">
-          {inProgressCount}
-        </span>
+        <span className="text-lg font-bold text-yellow-300">{inProgress}</span>
       </div>
 
-      <div className="flex flex-col items-center">
+      <div
+        onClick={() => alert("klick")}
+        className="flex flex-col items-center cursor-pointer"
+      >
         <span className="text-sm text-green-500">Erledigt</span>
-        <span className="text-lg font-bold text-green-500">
-          {completedCount}
-        </span>
+        <span className="text-lg font-bold text-green-500">{completed}</span>
       </div>
+
       <div className="flex flex-col items-center">
         <span className="text-sm text-indigo-500">Gesamt</span>
-        <span className="text-lg font-bold text-indigo-500">{totalCount}</span>
+        <span className="text-lg font-bold text-indigo-500">{total}</span>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import EntryCard from "../../component/entryCard/EntryCard";
 import ArchivedEntryList from "../archivedEntryList/ArchivedEntryList";
 import { Entry } from "../createEntry/CreateEntry";
 import ButtonLayout from "../buttonLayout/ButtonLayout";
-import DataInfo from "../entryCount/EntryCount";
+import EntryCount from "../entryCount/EntryCount";
 
 interface EntryListProps {
   entries: Entry[];
@@ -38,7 +38,7 @@ const EntryList: React.FC<EntryListProps> = ({
 
   return (
     <div className="flex flex-col gap-4 items-center w-full">
-      <DataInfo reloadFlag={reloadFlag} />
+      <EntryCount reloadFlag={reloadFlag} />
 
       <ButtonLayout
         onCreate={onCreate}

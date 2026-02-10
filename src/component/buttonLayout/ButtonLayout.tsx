@@ -10,7 +10,7 @@ function ButtonLayout({
   toggleArchived,
 }: ButtonLayoutProps) {
   return (
-    <div className="flex flex-row justify-center items-center gap-2 mt-5">
+    <div className="flex flex-row justify-center items-center gap-2 m-5">
       <button
         className="flex items-center gap-3 rounded-xl bg-indigo-500 px-5 py-3 text-base font-semibold text-white shadow-md hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
         onClick={onCreate}

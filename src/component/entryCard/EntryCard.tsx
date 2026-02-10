@@ -33,8 +33,8 @@ const EntryCard: React.FC<EntryCardProps> = ({
 
   return (
     <div
-      className={`flex flex-col items-center justify-center lg:flex-row flex-wrap gap-4 p-4 rounded-lg shadow-md lg:items-end ${
-        isArchived ? "bg-slate-100 opacity-60" : "bg-slate-300"
+      className={`flex flex-col items-center justify-center w-full lg:flex-row flex-wrap gap-4 p-4 rounded-lg shadow-md lg:items-end ${
+        isArchived ? "bg-slate-100 opacity-60 w-full" : "bg-slate-300"
       }`}
     >
       <div className="h-24 px-6 flex flex-col items-center justify-center rounded-md bg-blue-500 text-white font-semibold">

@@ -4,9 +4,8 @@ import ArchivedEntryList from "../archivedEntryList/ArchivedEntryList";
 import FilterEntryList from "../filterEntryList/FilterEntryList";
 import ButtonLayout from "../buttonLayout/ButtonLayout";
 import EntryCount from "../entryCount/EntryCount";
-import { Entry } from "../createEntry/CreateEntry"; // Wichtig: Importiere dein Entry-Interface
+import { Entry } from "../createEntry/CreateEntry";
 
-// 1. Das Interface muss hier definiert sein (oder importiert werden)
 interface EntryListProps {
   entries: Entry[];
   onEdit: (entry: Entry) => void;
@@ -18,7 +17,6 @@ interface EntryListProps {
   reloadFlag: number;
 }
 
-// Typ für den Filter
 export type FilterStatus =
   | "completed"
   | "inProgress"
@@ -38,7 +36,6 @@ const EntryList: React.FC<EntryListProps> = ({
 }) => {
   const [activeFilter, setActiveFilter] = useState<FilterStatus>(null);
 
-  // 2. Typisierung der Parameter (e: Entry) löst die "implicit any" Fehler
   const activeEntries = entries.filter((e: Entry) => !e.archived);
   const archivedEntries = entries.filter((e: Entry) => e.archived);
 
@@ -74,21 +71,17 @@ const EntryList: React.FC<EntryListProps> = ({
       ) : !filteredActive.length ? (
         <p className="text-gray-500 text-4xl">Keine aktiven Einträge</p>
       ) : (
-        filteredActive.map(
-          (
-            entry: Entry, // Typ hier ebenfalls hinzufügen
-          ) => (
-            <EntryCard
-              key={entry.id}
-              entry={entry}
-              onEdit={onEdit}
-              onArchive={onArchive}
-            />
-          ),
-        )
+        filteredActive.map((entry: Entry) => (
+          <EntryCard
+            key={entry.id}
+            entry={entry}
+            onEdit={onEdit}
+            onArchive={onArchive}
+          />
+        ))
       )}
     </div>
   );
 };
 
-export default EntryList; // Vergiss den Export nicht!
+export default EntryList;

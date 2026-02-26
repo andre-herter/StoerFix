@@ -1,6 +1,5 @@
 import { useEntryCounts } from "../../hooks/useEntryCounts";
 
-// Wir definieren den Typ exakt so wie in der EntryList
 type FilterStatus = "completed" | "inProgress" | "problem" | "total" | null;
 
 interface EntryCountProps {
@@ -16,7 +15,6 @@ function EntryCount({
 }: EntryCountProps) {
   const { completed, inProgress, problem, total } = useEntryCounts(reloadFlag);
 
-  // Helper-Funktion für das Styling des aktiven Zustands
   const getActiveClass = (status: FilterStatus) => {
     return activeFilter === status
       ? "bg-white/20 ring-1 ring-white/30"
@@ -27,7 +25,7 @@ function EntryCount({
     <div className="text-white border-[3px] border-indigo-500 rounded-xl p-2 flex justify-between w-full max-w-100 mx-auto bg-black/20">
       <div
         onClick={() => setFilterStatus("problem")}
-        className={`flex flex-col items-center cursor-pointer p-1 px-3 rounded-lg transition-all ${getActiveClass("problem")}`}
+        className={`flex flex-col items-center cursor-pointer p-1 px-1 sm:px-3 rounded-lg transition-all ${getActiveClass("problem")}`}
       >
         <span className="text-sm text-red-400">Problem</span>
         <span className="text-lg font-bold text-red-400">{problem}</span>
@@ -35,7 +33,7 @@ function EntryCount({
 
       <div
         onClick={() => setFilterStatus("inProgress")}
-        className={`flex flex-col items-center cursor-pointer p-1 px-3 rounded-lg transition-all ${getActiveClass("inProgress")}`}
+        className={`flex flex-col items-center cursor-pointer p-1 px-1 sm:px-3 rounded-lg transition-all ${getActiveClass("inProgress")}`}
       >
         <span className="text-sm text-yellow-300">In Bearbeitung</span>
         <span className="text-lg font-bold text-yellow-300">{inProgress}</span>
@@ -43,7 +41,7 @@ function EntryCount({
 
       <div
         onClick={() => setFilterStatus("completed")}
-        className={`flex flex-col items-center cursor-pointer p-1 px-3 rounded-lg transition-all ${getActiveClass("completed")}`}
+        className={`flex flex-col items-center cursor-pointer p-1 px-1 sm:px-3 rounded-lg transition-all ${getActiveClass("completed")}`}
       >
         <span className="text-sm text-green-500">Erledigt</span>
         <span className="text-lg font-bold text-green-500">{completed}</span>
@@ -51,7 +49,7 @@ function EntryCount({
 
       <div
         onClick={() => setFilterStatus("total")}
-        className={`flex flex-col items-center cursor-pointer p-1 px-3 rounded-lg transition-all ${getActiveClass("total")}`}
+        className={`flex flex-col items-center cursor-pointer p-1 px-1 sm:px-3 rounded-lg transition-all ${getActiveClass("total")}`}
       >
         <span className="text-sm text-indigo-500">Gesamt</span>
         <span className="text-lg font-bold text-indigo-500">{total}</span>

@@ -73,7 +73,11 @@ export default function Header({ query, setQuery }: InputSearchProps) {
         <div className="fixed inset-0 bg-black/50 z-40" aria-hidden="true" />
         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full bg-gray-900 p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-100/10">
           <div className="flex items-center justify-between">
-            <Link to="/" className="-m-1.5 p-1.5">
+            <Link
+              onClick={() => setMobileMenuOpen(false)}
+              to="/"
+              className="-m-1.5 p-1.5"
+            >
               <img alt="Logo" src={logo} className="h-8 w-auto" />
             </Link>
 
@@ -89,7 +93,13 @@ export default function Header({ query, setQuery }: InputSearchProps) {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-white/10">
               <div className="my-6 grid gap-5">
-                {user && <ButtonLink text="Einträge anzeigen" to="create" />}
+                {user && (
+                  <ButtonLink
+                    setMobileMenuOpen={setMobileMenuOpen}
+                    text="Einträge anzeigen"
+                    to="create"
+                  />
+                )}
                 {user && <Logout />}
               </div>
             </div>

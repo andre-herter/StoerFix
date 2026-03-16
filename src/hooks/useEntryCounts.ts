@@ -1,68 +1,50 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../supabaseClient";
 
 export function useEntryCounts(reloadFlag: number) {
-  const [counts, setCounts] = useState({
-    completed: 0,
-    inProgress: 0,
-    problem: 0,
-    total: 0,
-  });
-
+  const [entries, setEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadCounts = async () => {
+    const loadEntries = async () => {
       setLoading(true);
+
       try {
-        // 1. Erledigt abrufen
-        const { count: completed } = await supabase
+        const { data, error } = await supabase
           .from("entries")
-          .select("*", { count: "exact", head: true })
-          .neq("completed", "");
+          .select("completed, inProgress, problem");
 
-        // 2. In Bearbeitung abrufen
-        const { count: inProgress } = await supabase
-          .from("entries")
-          .select("*", { count: "exact", head: true })
-          .neq("inProgress", "")
-          .eq("completed", "");
+        if (error) throw error;
 
-        // 3. Problem abrufen
-        const { count: problem } = await supabase
-          .from("entries")
-          .select("*", { count: "exact", head: true })
-          .neq("problem", "")
-          .eq("inProgress", "")
-          .eq("completed", "");
-
-        // 4. Gesamt abrufen
-        const { count: total } = await supabase
-          .from("entries")
-          .select("*", { count: "exact", head: true });
-
-        // Alle Werte gleichzeitig in den State schreiben
-        setCounts({
-          completed: completed ?? 0,
-          inProgress: inProgress ?? 0,
-          problem: problem ?? 0,
-          total: total ?? 0,
-        });
+        setEntries(data ?? []);
       } catch (err) {
-        console.error("Fehler beim sequenziellen Laden:", err);
+        console.error("Fehler beim Laden:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    loadCounts();
+    loadEntries();
   }, [reloadFlag]);
 
+  const counts = useMemo(() => {
+    const completed = entries.filter((e) => e.completed !== "").length;
+
+    const inProgress = entries.filter(
+      (e) => e.inProgress !== "" && e.completed === "",
+    ).length;
+
+    const problem = entries.filter(
+      (e) => e.problem !== "" && e.inProgress === "" && e.completed === "",
+    ).length;
+
+    const total = entries.length;
+
+    return { completed, inProgress, problem, total };
+  }, [entries]);
+
   return {
-    completed: counts.completed,
-    inProgress: counts.inProgress,
-    problem: counts.problem,
-    total: counts.total,
+    ...counts,
     loading,
   };
 }

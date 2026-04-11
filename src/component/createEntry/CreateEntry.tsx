@@ -8,7 +8,9 @@ export interface Entry {
   id: string;
   problem: string;
   inProgress: string;
+  inProgress_at: string;
   completed: string;
+  completed_at: string;
   created_at: string;
   profiles?: {
     username: string;
@@ -65,58 +67,69 @@ function CreateEntry({ query }: InputSearchProps) {
   };
 
   const handleSave = async () => {
-    if (!form.problem && !form.inProgress && !form.completed) return;
+    if (
+      !form.problem.trim() &&
+      !form.inProgress.trim() &&
+      !form.completed.trim()
+    )
+      return;
 
-    if (form.completed && !form.inProgress) {
+    if (form.completed.trim() && !form.inProgress.trim()) {
       alert(
         "Eintrag kann nur abgeschlossen werden, wenn er in Bearbeitung ist.",
       );
       return;
     }
 
-    if (!form.problem && (form.inProgress || form.completed)) {
-      alert(
-        "Bitte zuerst ein Problem eintragen, bevor du etwas in Bearbeitung setzt.",
-      );
+    if (
+      !form.problem.trim() &&
+      (form.inProgress.trim() || form.completed.trim())
+    ) {
+      alert("Bitte zuerst ein Problem eintragen.");
       return;
     }
 
+    const now = new Date().toISOString();
+
     if (editId) {
+      const updateData: any = {
+        problem: form.problem,
+        inProgress: form.inProgress,
+        completed: form.completed,
+      };
+
+      updateData.inProgress_at = form.inProgress.trim() ? now : null;
+      updateData.completed_at = form.completed.trim() ? now : null;
+
       const { error } = await supabase
         .from("entries")
-        .update({
-          problem: form.problem,
-          inProgress: form.inProgress,
-          completed: form.completed,
-        })
+        .update(updateData)
         .eq("id", editId);
 
       if (!error) {
-        setEntries((prev) =>
-          prev.map((e) => (e.id === editId ? { ...e, ...form } : e)),
-        );
         triggerReload();
+      } else {
+        console.error("Update Fehler:", error.message);
       }
       setEditId(null);
     } else {
+      const insertData: any = {
+        problem: form.problem,
+        inProgress: form.inProgress,
+        completed: form.completed,
+        inProgress_at: form.inProgress.trim() ? now : null,
+        completed_at: form.completed.trim() ? now : null,
+      };
+
       const { data, error } = await supabase
         .from("entries")
-        .insert({
-          problem: form.problem,
-          inProgress: form.inProgress,
-          completed: form.completed,
-        })
+        .insert(insertData)
         .select(`*, profiles(username)`);
 
       if (!error && data) {
-        setEntries((prev) =>
-          [...prev, data[0]].sort(
-            (a, b) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime(),
-          ),
-        );
         triggerReload();
+      } else {
+        console.error("Insert Fehler:", error.message);
       }
     }
 

@@ -29,6 +29,12 @@ const EntryCard: React.FC<EntryCardProps> = ({
     completed: "Erledigt",
   };
 
+  const getTimestamp = (key: keyof Entry) => {
+    if (key === "inProgress") return entry.inProgress_at;
+    if (key === "completed") return entry.completed_at;
+    return entry.created_at;
+  };
+
   const canArchive = !!entry.completed?.trim() && !entry.archived;
 
   return (
@@ -37,53 +43,64 @@ const EntryCard: React.FC<EntryCardProps> = ({
         isArchived ? "bg-slate-100 opacity-60 w-full" : "bg-slate-300"
       }`}
     >
-      <div className="h-24 px-6 flex flex-col items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
-        <span>{entry.profiles?.username}</span>
-        <span>
-          {new Date(entry.created_at).toLocaleDateString("de-DE", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })}
-        </span>
-        <span className="flex items-center justify-center gap-1 ">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-          {new Date(entry.created_at).toLocaleTimeString("de-DE", {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </span>
-      </div>
-
       <div className="flex flex-col items-center gap-4 lg:flex-row lg:flex-wrap lg:items-start">
         {textFields.map((key) => {
           const uniqueId = `field-${key}-${crypto.randomUUID()}`;
+          const rawDate = getTimestamp(key);
 
           return (
             <div key={uniqueId} className="flex flex-col items-center">
-              <label
-                className="text-sm font-medium text-slate-700 mb-2"
-                htmlFor={uniqueId}
-              >
-                {labelText[key] ?? key}
-              </label>
+              <div className="flex flex-col gap-1 w-full px-1">
+                <label
+                  className="text-sm text-center font-bold text-slate-800"
+                  htmlFor={uniqueId}
+                >
+                  {labelText[key] ?? key}
+                </label>
+
+                <div className="flex items-center justify-center gap-2 text-[10px] sm:text-xs text-slate-600 mb-1">
+                  <span className="font-semibold text-slate-700">
+                    {entry.profiles?.username ?? "System"}
+                  </span>
+
+                  {rawDate && (
+                    <>
+                      <span>•</span>
+                      <span>
+                        {new Date(rawDate).toLocaleDateString("de-DE", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "2-digit",
+                        })}
+                      </span>
+                      <span className="flex items-center gap-0.5">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                          stroke="currentColor"
+                          className="size-3"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                          />
+                        </svg>
+                        {new Date(rawDate).toLocaleTimeString("de-DE", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
 
               <textarea
                 id={uniqueId}
-                className={`h-24 w-72 lg:w-72 p-2 border rounded resize-none ${getBgColor()}`}
+                className={`h-24 w-72 p-2 border border-slate-400 rounded shadow-inner resize-none text-sm font-medium leading-relaxed ${getBgColor()} text-slate-900 placeholder-slate-500`}
                 value={entry[key] ? String(entry[key]) : ""}
                 readOnly
               />
@@ -92,10 +109,10 @@ const EntryCard: React.FC<EntryCardProps> = ({
         })}
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 ml-2">
         {onEdit && (
           <button
-            className="h-11 px-6 bg-blue-500 text-white rounded"
+            className="h-10 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium transition-colors shadow-sm"
             onClick={() => onEdit(entry)}
             disabled={isArchived}
           >
@@ -105,7 +122,7 @@ const EntryCard: React.FC<EntryCardProps> = ({
 
         {onArchive && !isArchived && (
           <button
-            className={`h-11 px-6 rounded text-white
+            className={`h-10 px-5 rounded text-white font-medium transition-colors shadow-sm
               ${
                 canArchive
                   ? "bg-slate-600 hover:bg-slate-700"

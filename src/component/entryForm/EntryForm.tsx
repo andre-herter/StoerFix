@@ -84,8 +84,14 @@ const EntryForm: React.FC<EntryFormProps> = ({
              flex-wrap gap-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
-          {username || "Lade Username..."}
+        <div className="flex flex-col items-center">
+          <label className="block mb-2 font-medium text-center text-blue-600">
+            Benutzer
+          </label>
+
+          <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
+            {username || "Lade Username..."}
+          </div>
         </div>
 
         {fields.map(({ key, label, colorClasses, placeholder }) => (

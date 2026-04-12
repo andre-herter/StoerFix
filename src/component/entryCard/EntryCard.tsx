@@ -29,10 +29,20 @@ const EntryCard: React.FC<EntryCardProps> = ({
     completed: "Erledigt",
   };
 
+  // --- HILFSFUNKTIONEN FÜR DYNAMISCHE INFOS ---
+
   const getTimestamp = (key: keyof Entry) => {
     if (key === "inProgress") return entry.inProgress_at;
     if (key === "completed") return entry.completed_at;
     return entry.created_at;
+  };
+
+  const getCurrentuser = (key: keyof Entry) => {
+    // Falls ein spezifischer Bearbeiter existiert, diesen nehmen
+    if (key === "inProgress") return entry.inProgress_by;
+    if (key === "completed") return entry.completed_by;
+    // Standardmäßig den Ersteller aus der profiles-Relation
+    return entry.profiles?.username ?? "System";
   };
 
   const canArchive = !!entry.completed?.trim() && !entry.archived;
@@ -47,6 +57,7 @@ const EntryCard: React.FC<EntryCardProps> = ({
         {textFields.map((key) => {
           const uniqueId = `field-${key}-${crypto.randomUUID()}`;
           const rawDate = getTimestamp(key);
+          const username = getCurrentuser(key);
 
           return (
             <div key={uniqueId} className="flex flex-col items-center">
@@ -58,9 +69,10 @@ const EntryCard: React.FC<EntryCardProps> = ({
                   {labelText[key] ?? key}
                 </label>
 
-                <div className="flex items-center justify-center gap-2 text-[10px] sm:text-xs text-slate-600 mb-1">
+                {/* Info-Zeile: Zeigt User und Zeitstempel */}
+                <div className="flex items-center justify-center h-4 gap-2 text-[10px] sm:text-xs text-slate-600 mb-1">
                   <span className="font-semibold text-slate-700">
-                    {entry.profiles?.username ?? "System"}
+                    {username}
                   </span>
 
                   {rawDate && (

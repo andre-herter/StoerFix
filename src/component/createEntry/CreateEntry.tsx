@@ -9,8 +9,10 @@ export interface Entry {
   problem: string;
   inProgress: string;
   inProgress_at: string;
+  inProgress_by?: string;
   completed: string;
   completed_at: string;
+  completed_by?: string;
   created_at: string;
   profiles?: {
     username: string;
@@ -36,7 +38,7 @@ function CreateEntry({ query }: InputSearchProps) {
     const fetchEntries = async () => {
       const { data, error } = await supabase
         .from("entries")
-        .select(`*,profiles(username)`)
+        .select(`*, profiles(username)`)
         .order("created_at", { ascending: false });
 
       if (error) console.error("Fehler beim Laden:", error);
@@ -53,9 +55,6 @@ function CreateEntry({ query }: InputSearchProps) {
       .eq("id", entry.id);
 
     if (!error) {
-      setEntries((prev) =>
-        prev.map((e) => (e.id === entry.id ? { ...e, archived: true } : e)),
-      );
       triggerReload();
     } else {
       console.error("Fehler beim Archivieren:", error);
@@ -67,70 +66,82 @@ function CreateEntry({ query }: InputSearchProps) {
   };
 
   const handleSave = async () => {
-    if (
-      !form.problem.trim() &&
-      !form.inProgress.trim() &&
-      !form.completed.trim()
-    )
-      return;
+    const trimmedProblem = form.problem.trim();
+    const trimmedInProgress = form.inProgress.trim();
+    const trimmedCompleted = form.completed.trim();
 
-    if (form.completed.trim() && !form.inProgress.trim()) {
+    // Validierung
+    if (!trimmedProblem && !trimmedInProgress && !trimmedCompleted) return;
+
+    if (trimmedCompleted && !trimmedInProgress) {
       alert(
         "Eintrag kann nur abgeschlossen werden, wenn er in Bearbeitung ist.",
       );
       return;
     }
 
-    if (
-      !form.problem.trim() &&
-      (form.inProgress.trim() || form.completed.trim())
-    ) {
+    if (!trimmedProblem && (trimmedInProgress || trimmedCompleted)) {
       alert("Bitte zuerst ein Problem eintragen.");
       return;
     }
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     const now = new Date().toISOString();
+    const currentUsername =
+      user?.user_metadata?.username || user?.email || "Unbekannt";
 
     if (editId) {
+      // --- EDIT MODUS ---
+      const originalEntry = entries.find((e) => e.id === editId);
+
       const updateData: any = {
-        problem: form.problem,
-        inProgress: form.inProgress,
-        completed: form.completed,
+        problem: trimmedProblem,
+        inProgress: trimmedInProgress,
+        completed: trimmedCompleted,
       };
 
-      updateData.inProgress_at = form.inProgress.trim() ? now : null;
-      updateData.completed_at = form.completed.trim() ? now : null;
+      if (originalEntry) {
+        // Zeitstempel für "inProgress" NUR ändern, wenn der Text sich geändert hat
+        if (trimmedInProgress !== (originalEntry.inProgress || "")) {
+          updateData.inProgress_at = trimmedInProgress ? now : null;
+          updateData.inProgress_by = trimmedInProgress ? currentUsername : null;
+        }
+
+        // Zeitstempel für "completed" NUR ändern, wenn der Text sich geändert hat
+        if (trimmedCompleted !== (originalEntry.completed || "")) {
+          updateData.completed_at = trimmedCompleted ? now : null;
+          updateData.completed_by = trimmedCompleted ? currentUsername : null;
+        }
+      }
 
       const { error } = await supabase
         .from("entries")
         .update(updateData)
         .eq("id", editId);
 
-      if (!error) {
-        triggerReload();
-      } else {
-        console.error("Update Fehler:", error.message);
-      }
+      if (!error) triggerReload();
+      else console.error("Update Fehler:", error.message);
+
       setEditId(null);
     } else {
+      // --- INSERT MODUS (Neuer Eintrag) ---
       const insertData: any = {
-        problem: form.problem,
-        inProgress: form.inProgress,
-        completed: form.completed,
-        inProgress_at: form.inProgress.trim() ? now : null,
-        completed_at: form.completed.trim() ? now : null,
+        problem: trimmedProblem,
+        inProgress: trimmedInProgress,
+        completed: trimmedCompleted,
+        user_id: user?.id,
+        inProgress_at: trimmedInProgress ? now : null,
+        inProgress_by: trimmedInProgress ? currentUsername : null,
+        completed_at: trimmedCompleted ? now : null,
+        completed_by: trimmedCompleted ? currentUsername : null,
       };
 
-      const { data, error } = await supabase
-        .from("entries")
-        .insert(insertData)
-        .select(`*, profiles(username)`);
+      const { error } = await supabase.from("entries").insert(insertData);
 
-      if (!error && data) {
-        triggerReload();
-      } else {
-        console.error("Insert Fehler:", error.message);
-      }
+      if (!error) triggerReload();
+      else console.error("Insert Fehler:", error.message);
     }
 
     setForm({ problem: "", inProgress: "", completed: "" });
@@ -139,9 +150,9 @@ function CreateEntry({ query }: InputSearchProps) {
 
   const handleEdit = (entry: Entry) => {
     setForm({
-      problem: entry.problem,
-      inProgress: entry.inProgress,
-      completed: entry.completed,
+      problem: entry.problem || "",
+      inProgress: entry.inProgress || "",
+      completed: entry.completed || "",
     });
     setEditId(entry.id);
     setOpen(true);
@@ -158,11 +169,7 @@ function CreateEntry({ query }: InputSearchProps) {
         onClose={() => {
           setOpen(false);
           setEditId(null);
-          setForm({
-            problem: "",
-            inProgress: "",
-            completed: "",
-          });
+          setForm({ problem: "", inProgress: "", completed: "" });
         }}
       />
 

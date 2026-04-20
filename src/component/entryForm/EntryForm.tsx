@@ -72,7 +72,7 @@ const EntryForm: React.FC<EntryFormProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+      className="fixed inset-0 overflow-y-auto p-4 bg-black bg-opacity-50 flex justify-center items-center z-50"
       onClick={onClose}
     >
       <div
@@ -81,7 +81,7 @@ const EntryForm: React.FC<EntryFormProps> = ({
              items-center justify-center
              xl:flex-row
              xl:items-end lg:justify-center
-             flex-wrap gap-4"
+             flex-wrap gap-4 my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex flex-col items-center">

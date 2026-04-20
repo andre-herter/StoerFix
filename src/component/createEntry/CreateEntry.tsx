@@ -70,7 +70,6 @@ function CreateEntry({ query }: InputSearchProps) {
     const trimmedInProgress = form.inProgress.trim();
     const trimmedCompleted = form.completed.trim();
 
-    // Validierung
     if (!trimmedProblem && !trimmedInProgress && !trimmedCompleted) return;
 
     if (trimmedCompleted && !trimmedInProgress) {

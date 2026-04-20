@@ -29,8 +29,6 @@ const EntryCard: React.FC<EntryCardProps> = ({
     completed: "Erledigt",
   };
 
-  // --- HILFSFUNKTIONEN FÜR DYNAMISCHE INFOS ---
-
   const getTimestamp = (key: keyof Entry) => {
     if (key === "inProgress") return entry.inProgress_at;
     if (key === "completed") return entry.completed_at;

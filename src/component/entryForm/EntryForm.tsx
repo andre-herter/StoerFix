@@ -85,9 +85,9 @@ const EntryForm: React.FC<EntryFormProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex flex-col items-center">
-          <label className="block mb-2 font-medium text-center text-blue-600">
+          <p className="block mb-2 font-medium text-center text-blue-600">
             Benutzer
-          </label>
+          </p>
 
           <div className="h-24 px-6 flex items-center justify-center rounded-md bg-blue-500 text-white font-semibold">
             {username || "Lade Username..."}
